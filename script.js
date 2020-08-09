@@ -4,9 +4,9 @@ $(document).ready(function() {
     const $timeBlockDiv = $('<div>').addClass("time-block row");
     let $hourDiv = $('<div>').addClass("text-right col-1 hour").text('\n' + (9+i));
     let $textArea = $('<textarea>').addClass("col").attr("time-value", (9+i));
-    if ($textArea.attr("time-value") < m.hour()) {
+    if ($textArea.attr("time-value") < moment().hour()) {
       $textArea.addClass("past");
-    } else if ($textArea.attr("time-value") > m.hour()) {
+    } else if ($textArea.attr("time-value") > moment().hour()) {
       $textArea.addClass("future");
     } else {
       $textArea.addClass("present");
