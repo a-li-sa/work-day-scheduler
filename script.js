@@ -1,13 +1,18 @@
 $(document).ready(function() {
-  const $containerEl = $('.container');
+  let renderTime = function() {
+    $('#currentDay').text(moment().format('LLLL'));
+  }
+  renderTime();
+  //update the time every second
+  setInterval(renderTime, 1000);
+  //create elements to go inside container div
   for (let i = 0; i < 9; i++) {
-    //create a div for each time block
+    //create a div for each timeblock
     const $timeBlockDiv = $('<div>').addClass("time-block row");
-    const workHours = ['9AM', '10AM', '11AM', '12PM', '1PM', '2PM', '3PM', '4PM', '5PM'];
-    //create an hour div for each time block
+    const workHours = ['9 AM', '10 AM', '11 AM', '12 PM', '1 PM', '2 PM', '3 PM', '4 PM', '5 PM'];
+    //create an hour div for each timeblock
     let $hourDiv = $('<div>').addClass("text-right col-1 hour").text('\n' + workHours[i]);
-    //create a textarea for each corresponding hour
-    //give each textarea an attribute equal to the hour of the day it corresponds to
+    //create a textarea and give each textarea an attribute equal to the hour of the day it corresponds to
     let $textArea = $('<textarea>').addClass("col").attr("time-value", (9+i));
     //
     if ($textArea.attr("time-value") < moment().hour()) {
@@ -20,48 +25,40 @@ $(document).ready(function() {
       //if the time-value attribute is equal to the current hour, then give it a class of present
       $textArea.addClass("present");
     }
-    //create a button for each time block
+    //create a button for each timeblock
     let $button = $('<button>').addClass("col-1 saveBtn");
     //put an icon in each button
     const $saveIcon = $('<i>').addClass("fas fa-save");
     $button.append($saveIcon);
-    //in order, append the hour div, textarea, and button to the time block
+    //in order, append the hour div, textarea, and button to the timeblock
     $timeBlockDiv.append($hourDiv, $textArea, $button);
-    //append the time block to the container div
-    $containerEl.append($timeBlockDiv);
+    //append the timeblock to the container div
+    $('.container').append($timeBlockDiv);
   }
-  //this object will be saved in the local storage
-  let scheduleObj = {
-    '9':'',
-    '10':'',
-    '11':'',
-    '12':'',
-    '13':'',
-    '14':'',
-    '15':'',
-    '16':'',
-    '17':''
-  }
-  //get the object from the local storage and update the scheduleObj
+  //create an object - make a key for each hour, set their value to empty string, will be saved in the local storage
+  let scheduleObj = {'9':'','10':'','11':'','12':'','13':'','14':'','15':'','16':'','17':''}
+  //change the scheduleObj to the item saved in the local storage
   function init() {
     let storedSchedule = JSON.parse(localStorage.getItem('scheduleInput'));
     if (storedSchedule !== null) {
       scheduleObj = storedSchedule;
     }
-    //change the text inside the textarea to the saved schedule object
-    let $savedInputs = Array.from($('.col'));
-    $savedInputs.forEach(element => {
-      timeValue = element.getAttribute('time-value').toString();
+    //change the text inside the textarea to the local storage item
+    let $textAreaInputs = Array.from($('.col'));
+    $textAreaInputs.forEach(element => {
+      let timeValue = element.getAttribute('time-value');
       element.textContent = (scheduleObj[timeValue]);
     });
   }
   init();
   $('.saveBtn').on('click', function() {
-    //this targets the textarea of the corresponding button and grabs its value, AKA its text content
-    var scheduleInput = $(this).prev()[0].value;
-    //this grabs the textarea's time-value attribute
-    var timeValue = ($(this).prev()[0].getAttribute("time-value")); 
+    //target the textarea of the corresponding button and grab its value, AKA its text input
+    let scheduleInput = $(this).prev()[0].value;
+    //grab the textarea's time-value attribute
+    let timeValue = ($(this).prev()[0].getAttribute("time-value")); 
+    //update the scheduleObj
     scheduleObj[timeValue] = scheduleInput;
+    //update the item in local storage
     localStorage.setItem('scheduleInput', JSON.stringify(scheduleObj));
   })
 });
